@@ -1,10 +1,12 @@
 package com.udacity.stockhawk.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         StockAdapter.StockAdapterOnClickHandler {
 
     private static final int STOCK_LOADER = 0;
+    private static final String SYMBOL = "symbol";
     @SuppressWarnings("WeakerAccess")
     @BindView(R.id.recycler_view)
     RecyclerView stockRecyclerView;
@@ -43,10 +46,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindView(R.id.error)
     TextView error;
     private StockAdapter adapter;
+    private ProgressListener mProgressListener;
 
     @Override
     public void onClick(String symbol) {
         Timber.d("Symbol clicked: %s", symbol);
+        ButterKnife.bind(this);
+        Intent intent = new Intent(this, StockDetailActivity.class);
+        intent.putExtra(SYMBOL, symbol);
+        startActivity(intent);
     }
 
     @Override
@@ -62,7 +70,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setRefreshing(true);
-        onRefresh();
+      showListener();
+      onRefresh();
 
         QuoteSyncJob.initialize(this);
         getSupportLoaderManager().initLoader(STOCK_LOADER, null, this);
@@ -84,7 +93,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-    private boolean networkUp() {
+  private void showListener() {
+    if (mProgressListener != null) mProgressListener.onShown();
+    notifyListener(mProgressListener);
+  }
+
+  private boolean networkUp() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
@@ -98,14 +112,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if (!networkUp() && adapter.getItemCount() == 0) {
             swipeRefreshLayout.setRefreshing(false);
-            error.setText(getString(R.string.error_no_network));
+          dismissProgress();
+          error.setText(getString(R.string.error_no_network));
             error.setVisibility(View.VISIBLE);
         } else if (!networkUp()) {
             swipeRefreshLayout.setRefreshing(false);
-            Toast.makeText(this, R.string.toast_no_connectivity, Toast.LENGTH_LONG).show();
+          dismissProgress();
+          Toast.makeText(this, R.string.toast_no_connectivity, Toast.LENGTH_LONG).show();
         } else if (PrefUtils.getStocks(this).size() == 0) {
             swipeRefreshLayout.setRefreshing(false);
-            error.setText(getString(R.string.error_no_stocks));
+          dismissProgress();
+          error.setText(getString(R.string.error_no_stocks));
             error.setVisibility(View.VISIBLE);
         } else {
             error.setVisibility(View.GONE);
@@ -121,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             if (networkUp()) {
                 swipeRefreshLayout.setRefreshing(true);
+
+              showListener();
             } else {
                 String message = getString(R.string.toast_stock_added_no_connectivity, symbol);
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
@@ -142,8 +161,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         swipeRefreshLayout.setRefreshing(false);
-
-        if (data.getCount() != 0) {
+      dismissProgress();
+      if (data.getCount() != 0) {
             error.setVisibility(View.GONE);
         }
         adapter.setCursor(data);
@@ -153,11 +172,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         swipeRefreshLayout.setRefreshing(false);
-        adapter.setCursor(null);
+      dismissProgress();
+      adapter.setCursor(null);
     }
 
+  private void dismissProgress() {
+    if (mProgressListener != null) mProgressListener.onDismissed();
+    notifyListener(mProgressListener);
+  }
 
-    private void setDisplayModeMenuItemIcon(MenuItem item) {
+  private void setDisplayModeMenuItemIcon(MenuItem item) {
         if (PrefUtils.getDisplayMode(this)
                 .equals(getString(R.string.pref_display_mode_absolute_key))) {
             item.setIcon(R.drawable.ic_percentage);
@@ -185,5 +209,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+  public boolean isInProgress() {
+    return swipeRefreshLayout.isRefreshing();
+  }
+
+  public interface ProgressListener{
+      public void onShown();
+      public void onDismissed();
+    }
+
+    public void setProgressListener(ProgressListener progressListener){
+      this.mProgressListener = progressListener;
+    }
+
+    public void notifyListener(ProgressListener progressListener){
+      if (progressListener == null) return;
+      if (isInProgress()){
+        progressListener.onShown();
+      } else progressListener.onDismissed();
     }
 }

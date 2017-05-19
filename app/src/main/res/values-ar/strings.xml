@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Stock Hawk</string>
+  <string name="dialog_title">إضافة سهم</string>
+  <string name="error_no_network">لا اتصال الشبكة! سيتم إعادة تحميل البيانات عند توفر الشبكة.</string>
+  <string name="error_no_stocks">لم يتم إضافة أي أسهم! ضرب زر العمل العائمة لإضافة واحد.</string>
+  <string name="pref_display_mode_percentage_key">النسبة المئوية</string>
+  <string name="pref_stocks_key">مخازن</string>
+  <string name="stock_invalid">هذا المخزون غير معترف به. الرجاء تجربة اسم آخر.</string>
+  <string name="toast_no_connectivity">سيتم تحديث عندما الشبكة المتاحة.</string>
+  <string name="toast_stock_added_no_connectivity">تمت إضافة الرمز %s. سيتم تحديث عندما الشبكة المتاحة.</string>
+  <string name="dialog_add">إضافة</string>
+  <string name="dialog_cancel">إلغاء</string>
+  <string name="dialog_hint">مثل غوغ</string>
+  <string name="my_stocks">بلدي الأسهم</string>
+  <string name="pref_display_mode_absolute_key">مطلق</string>
+  <string name="add_stock_button">إضافة زر الأسهم</string>
+  <string name="minimum">الحد الأدنى</string>
+  <string name="average">معدل</string>
+  <string name="maximum">أقصى</string>
+</resources>

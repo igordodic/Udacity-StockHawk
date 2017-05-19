@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Stock Hawk</string>
+  <string name="dialog_add">Ajouter</string>
+  <string name="dialog_cancel">Annuler</string>
+  <string name="dialog_hint">Symbol (par ex GOOG)</string>
+  <string name="dialog_title">Ajouter un titre</string>
+  <string name="error_no_network">Accès au réseau indisponible. Les données seront rechargées dès que celui-ci redeviendra disponible.</string>
+  <string name="error_no_stocks">Aucun titre ajouté! Cliquez sur le bouton flottant pour en ajouter un.</string>
+  <string name="pref_display_mode_absolute_key">absolut</string>
+  <string name="pref_display_mode_key"></string>
+  <string name="pref_display_mode_percentage_key">pourcentage</string>
+  <string name="pref_stocks_key">titres</string>
+  <string name="stock_invalid">Ce titre n\'est pas reconnu. Veuillez en essayer un autre.</string>
+  <string name="toast_no_connectivity">Les données seront rechargées dès que le réseau sera disponible.</string>
+  <string name="toast_stock_added_no_connectivity">"Le titre %s a été ajouté, les données seront rechargées dès que le réseau sera disponible. "</string>
+  <string name="my_stocks">Mes titres</string>
+  <string name="add_stock_button">Bouton pour ajouter un titre</string>
+  <string name="average">Moyenne</string>
+  <string name="maximum">Maximum</string>
+  <string name="minimum">Minimum</string>
+</resources>
